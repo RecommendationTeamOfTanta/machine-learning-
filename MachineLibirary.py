@@ -349,6 +349,8 @@ predictions_from_latestModel = predict_output(test_feature_matrix, gradient_weig
 
 eissas = predictions_from_latestModel[0]
 outt = test_output[0]
+outt = test_output[1]
+
 
 eissasasddss = (dot_product_m_v(faetures_matrix_tuple,[0,0]))
 
