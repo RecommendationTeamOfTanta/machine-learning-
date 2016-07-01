@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{c5007215-f574-4055-9dc9-45397a0b7ba1}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>trans2.py</StartupFile>
+    <StartupFile>top_rated.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -42,6 +42,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="recommendations.py" />
+    <Compile Include="top_rated.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="trans2.py">
       <SubType>Code</SubType>
     </Compile>

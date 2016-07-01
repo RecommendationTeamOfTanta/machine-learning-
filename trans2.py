@@ -55,6 +55,3 @@ for k,v in p_vector.all_data_set.items():
 	users.update_one({ 'name':{'first':k} },
 			{ "$set": { 'userRatings': userRatings } },upsert=True)
 
-
-
-								   ٍ
