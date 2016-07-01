@@ -7,6 +7,8 @@ import array
 import itertools
 import ast
 import io
+
+
 ##################################################################
 #split to train and test
 ##################################################################
@@ -54,12 +56,11 @@ def loadDataset(filename, split, training_set={}, test_set={},all_data_set={},tr
 		dataset = list(lines)
 
 		for x in range(len(dataset) - 1):
-			all_data_set
-			for y in range(len(headers)):
 
-				#to skip the data column in dataset kc_house_data.csv
-				if y == 1:continue
-				dataset[x][y] = float(dataset[x][y])
+		   	#to skip the date column in dataset kc_house_data.csv
+			#for y in range(len(headers)):
+			#	if y == 1:continue
+			#	dataset[x][y] = float(dataset[x][y])
 
 			
 			#devide data to train and test
@@ -71,6 +72,7 @@ def loadDataset(filename, split, training_set={}, test_set={},all_data_set={},tr
 		for row in dataset:
 			for h,v in zip(headers,row):
 				all_data_set[h].append(v)
+
 
 		#fill training_set
 		for row in train_prepair:
@@ -90,6 +92,11 @@ def loadDataset(filename, split, training_set={}, test_set={},all_data_set={},tr
 
 		for k,v in test_set.items():
 			test_tuple.append((k,v))
+
+
+		# sort all parts by value		
+		training_tuple =[(k,sorted(v)) for k,v in training_tuple]
+		test_tuple=[(k,sorted(v)) for k,v in test_tuple]
 
 
 
@@ -251,14 +258,14 @@ def regression_gradient_descent(feature_matrix, output, initial_weights, step_si
 #Utilities functions
 ######################
 
-#get a list of first element in a dictionary of lists
+#get a list of index element in a dictionary of lists by default it get the first element
 def index_in_dic(dic,index_of_list=0):
 	lista = list()
 	for it in dic:
 		lista.append(dic[it][index_of_list])
 	return lista
 
-#return a row from tuple by index
+#return a row from tuple by index by default it get the first element
 def index_in_tuple(tuple,index_of_list=0):
 	lista = list()
 	for it in tuple:
@@ -300,95 +307,130 @@ def get_column(lista,column):
 		if tuple[0].startswith(column):
 			return tuple[1]
 
+def get_columns(lista,columns):
+	prepared_tuple=[]
+	for tuple in lista:
+		for i in range(len(columns)):
+			if tuple[0].startswith(columns):
+				prepared_tuple.append((columns[i]),tuple[1])
+	return prepared_tuple
 
 
 
+# get polynomial of a feature for example polynomial_tuple([1,2,3,4],2)
+def polynomial_tuple(feature,degree):
+	poly_tuple=[]
+	poly_tuple.append(('constant',[1 for i in range(len(feature))]))
+	poly_tuple.append(('power_1',feature))
+	if degree>1:
+		for power in range(2,degree+1):
+			f = lambda x:x**power
+			poly_tuple.append(('power_'+str(power),[f(i) for i in feature]))
+	return poly_tuple
 
-dictionary = {'1to5':[1,2,3,4,5],'6to10':[6,7,8,9,10],'11to15':[11,12,13,14,15]}
 
-list_of_tuple = [('1to5',[1,2,3,4,5]),('6to10',[6,7,8,9,10]),('11to15',[11,12,13,14,15])]
 
-eissa = get_column(list_of_tuple,'6to10')
-eisis = dic_to_tuple(dictionary)
+#dictionary = {'1to5':[1,2,3,4,5],'6to10':[6,7,8,9,10],'11to15':[11,12,13,14,15]}
+
+#list_of_tuple = [('1to5',[1,2,3,4,5]),('6to10',[6,7,8,9,10]),('11to15',[11,12,13,14,15])]
+
+#eissa = get_column(list_of_tuple,'6to10')
+#eisis = dic_to_tuple(dictionary)
 
 
 
 ######################################################
 #Testing
 ######################################################
-e = 4e-12
-r = (2 * e)
-input = [1,2,3,4,5]
-output = [1 + 1 * a for a in input]
-(intercept,slope) = linear_regression(input,output)
+#e = 4e-12
+#r = (2 * e)
+#input = [1,2,3,4,5]
+#output = [1 + 1 * a for a in input]
+#(intercept,slope) = linear_regression(input,output)
 
-print("intercept: " + str(intercept))
-print("slope: " + str(slope))
+#print("intercept: " + str(intercept))
+#print("slope: " + str(slope))
 
-training_set = {}
-test_set = {}
-all_data_set = {}
-training_tuple = [] 
-test_tuple = []
-all_data_set_tuple = []
+#training_set = {}
+#test_set = {}
+#all_data_set = {}
+#training_tuple = [] 
+#test_tuple = []
+#all_data_set_tuple = []
 										
-loadDataset("kc_house_data.csv",.8,training_set,test_set,all_data_set,training_tuple,test_tuple,all_data_set_tuple)
+#loadDataset("kc_house_data.csv",.8,training_set,test_set,all_data_set,training_tuple,test_tuple,all_data_set_tuple)
+
+#eissa = get_column(training_tuple,'sqft_living') 
+
+#listoo =[]
+#for item in training_tuple:
+#	listoo.append((item[0],sorted(item[1])))
+
+#test polynomial
+#polynomials = polynomial_tuple(get_column(training_tuple,'sqft_living'),2)
 
 #eeff =
 #dot_product(get_column(training_tuple,'sqft_living'),get_column(training_tuple,'price'))
-faetures_matrix_dic,output_vector = prepare_data_dic(all_data_set,['sqft_living'],'price')
-faetures_matrix_tuple,output_vector_tuple = prepare_data_tuple(training_tuple,['bedrooms','bathrooms','sqft_living','sqft_lot','sqft_living15'],'price')
+#faetures_matrix_dic,output_vector = prepare_data_dic(all_data_set,['sqft_living'],'price')
+#faetures_matrix_tuple,output_vector_tuple = prepare_data_tuple(training_tuple,['sqft_living','sqft_living15'],'price')
 
 
 #gradient test
-gradient_weights = regression_gradient_descent(faetures_matrix_tuple,output_vector_tuple,[-100000,1,1,1,1, 1],4e-12,1e9)
+#gradient_weights = regression_gradient_descent(faetures_matrix_tuple,output_vector_tuple,[-100000,1, 1],4e-12,1e9)
 
-out = output_vector[0]
-test_feature_matrix, test_output = prepare_data_tuple(test_tuple,['bedrooms','bathrooms','sqft_living','sqft_lot','sqft_living15'], 'price')
-predictions_from_latestModel = predict_output(test_feature_matrix, gradient_weights)
-
-eissas = predictions_from_latestModel[0]
-outt = test_output[0]
-outt = test_output[1]
-outt = test_output[2]
+#gradient_weights = regression_gradient_descent(polynomials,output_vector_tuple,[-100000,1, 1],4e-12,1e12)
 
 
+#out = output_vector[0]
+#test_feature_matrix, test_output = prepare_data_tuple(test_tuple,['sqft_living','sqft_living15'], 'price')
+#predictions_from_latestModel = predict_output(test_feature_matrix, gradient_weights)
 
-eissasasddss = (dot_product_m_v(faetures_matrix_tuple,[0,0]))
-
+#eissas = predictions_from_latestModel[0]
+#outt = test_output[0]
+#outt = test_output[1]
+#outt = test_output[2]
 
 
 
-test_prediction = predict_output(faetures_matrix_tuple,[0,0])
-errors = [a - b for a,b in zip(test_prediction,output_vector_tuple)]
-feature = get_column(faetures_matrix_tuple,'constant')
-derivative = feature_derivative(errors,feature)
+#eissasasddss = (dot_product_m_v(faetures_matrix_tuple,[0,0]))
 
 
-eissa = predict_output(faetures_matrix_tuple,[1,1,1])
 
-dddd = sum([float(i) for i in output_vector_tuple])
+
+#test_prediction = predict_output(faetures_matrix_tuple,[0,0])
+#errors = [a - b for a,b in zip(test_prediction,output_vector_tuple)]
+#feature = get_column(faetures_matrix_tuple,'constant')
+#derivative = feature_derivative(errors,feature)
+
+
+#eissa = predict_output(faetures_matrix_tuple,[1,1,1])
+
+#dddd = sum([float(i) for i in output_vector_tuple])
 
 
 #intercept, slope = linear_regression([float(i) for i in
 #training_set['sqft_living']],[float(i) for i in training_set['price']])
-intercept, slope = linear_regression(training_set['sqft_living'], training_set['price'])
+#intercept, slope = linear_regression(training_set['sqft_living'], training_set['price'])
 
-print("intercept: " + str(intercept))
-print("slope: " + str(slope))
+#print("intercept: " + str(intercept))
+#print("slope: " + str(slope))
 
 #test if the data devision work correctly
-total = len(training_set['price']) + len(test_set['price'])
-testo = (len(test_set['price']) / total) * 100
-train = (len(training_set['price']) / total) * 100
+#total = len(training_set['price']) + len(test_set['price'])
+#testo = (len(test_set['price']) / total) * 100
+#train = (len(training_set['price']) / total) * 100
 
-print("predicted: " + str(prediction_of_regression(test_set['sqft_living'][3],slope,intercept)))
+#print("predicted: " + str(prediction_of_regression(test_set['sqft_living'][3],slope,intercept)))
 
-print("actual: " + str(test_set['price'][3]))
+#print("actual: " + str(test_set['price'][3]))
 
 
-rss = residual_sum_of_squares(training_set['sqft_living'],training_set['price'],intercept,slope)
-print(str(rss))
+#rss = residual_sum_of_squares(training_set['sqft_living'],training_set['price'],intercept,slope)
+#print(str(rss))
+
+#print("predicted: " + str(prediction_of_regression(test_set['sqft_living'][4],slope,intercept)))
+
+#print("actual: " + str(test_set['price'][4]))
 
 
 #with open("list.txt", "w") as text_file:

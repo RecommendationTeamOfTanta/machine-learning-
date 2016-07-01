@@ -153,6 +153,7 @@ movies = transformPrefs(critics)
 
 #for item in getRecommendations(critics,"Sleem",similarity=Sim_Pearson):
 #    print(item)
+
 #print("\n\n")
 #print(transformPrefs(critics))
 #print("\n\n")
@@ -163,4 +164,5 @@ movies = transformPrefs(critics)
 #print(Sim_Pearson(critics,"Atef","Hassan"))
 
 #print(Sim_Pearson(critics,"Atef","Hassan"))
-print(getRecommendations(critics,"Eissa"))
+print(getRecommendations(critics,"Hassan"))
+print(topMatches(critics,"Hassan",4,Sim_Pearson));
