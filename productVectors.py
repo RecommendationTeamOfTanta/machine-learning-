@@ -148,7 +148,9 @@ def getSimilarities(person,data):    # person is string and data dictionary     
 		if(person != person2):
 			sim_resut = CosinAveraged(data[person],data[person2])
 			sim_score[person2] = sim_resut
-	return sim_score
+			rankings = [{"rest_id":rest,"rankValue":rank} for rest,rank in sim_score.items()]	
+
+	return rankings
 
 
 def recommend(person_sim,person,data): 
@@ -192,9 +194,9 @@ def getRecommendations(prefs,person,similarity=CosinAveraged):
 				SimSums.setdefault(item,0)
 				SimSums[item]+=sim
 	#the ranking list
-	rankings = [(total / SimSums[item],item) for item,total in totals.items()]
-	rankings.sort()
-	rankings.reverse()
+	rankings = [{"rest_id":item,"rankValue":total / SimSums[item]} for item,total in totals.items()]	
+	#rankings.sort()
+	#rankings.reverse()
 	return rankings
 
 
@@ -236,29 +238,36 @@ def transformPrefs(prefs):
 
 
 def topMatches(prefs,person,n=5,similarity=sim_pearson):
-	scores=[(similarity(prefs,person,other),other)
-	for other in prefs if other!=person]
+	#scores=[(similarity(prefs,person,other),other)
+	#for other in prefs if other!=person]
+	score={}
+	for other in prefs:
+		if other!=person:
+			score[other]=similarity(prefs,person,other)
+
 	
 	# Sort the list so the highest scores appear at the top
-	scores.sort()
-	scores.reverse()
-	return scores[0:n]
 
-def calculateSimilarItems(prefs,n=10):
+	#scores.sort()
+	#scores.reverse()
+	#return scores[0:n]
+	return score
+
+def calculateSimilarItems(prefs,n=5):
 	# Create a dictionary of items showing which other items they
 	# are most similar to.
 	result={}
 	
 	# Invert the preference matrix to be item-centric
-	itemPrefs=transformPrefs(prefs)
+
+	#error was there
+	#itemPrefs=transformPrefs(prefs)
 	
 	c=0
-	for item in itemPrefs:
-		# Status updates for large datasets
-		#c+=1
-		#if c%100==0: print(c,len(itemPrefs))
+	for item in prefs:
+		
 		# Find the most similar items to this one
-		scores=topMatches(itemPrefs,item,n=n,similarity=sim_pearson)
+		scores=topMatches(prefs,item,n=n,similarity=sim_pearson)
 		result[item]=scores
 	return result
 
@@ -296,22 +305,22 @@ def getRecommendedItems(prefs,itemMatch,user):
 
 
 
-all_data_set = {}#ourdata										
-loadDataset("iTARGET.csv",all_data_set)
-transformed_data_Set = transform_data(all_data_set)#transformed
+#all_data_set = {}#ourdata										
+#loadDataset("iTARGET.csv",all_data_set)
+#transformed_data_Set = transform_data(all_data_set)#transformed
 
 def get_recommendations(user_id):
 	#similarities = getSimilarities(user_id,all_data_set)
 	#recommendations = recommend(similarities,user_id,all_data_set)
-	recommendations =getRecommendations(all_data_set,user_id,similarity=euc)
+	recommendations = getRecommendations(all_data_set,user_id,similarity=euc)
 	return recommendations
 
-def get_rec_item_based(rest_name):
-	sim_item_dataset=calculateSimilarItems(all_data_set)
-	return sim_item_dataset[rest_name]
+def get_rec_item_based(data):
+	sim_item_dataset = calculateSimilarItems(data)
+	return sim_item_dataset
 
-sim_item_dataset=calculateSimilarItems(all_data_set)
-eissss=getRecommendations(all_data_set,"a44b92ffc230e5467234433ac3803960",similarity=euc)
+#sim_item_dataset = calculateSimilarItems(all_data_set)
+#eissss=getRecommendations(all_data_set,"a44b92ffc230e5467234433ac3803960",similarity=euc)
 #print(getRecommendedItems(all_data_set,sim_item_dataset,"a44b92ffc230e5467234433ac3803960"))
 
 #sim = getSimilarities("Atef",data)
